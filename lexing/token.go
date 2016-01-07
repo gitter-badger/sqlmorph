@@ -1,0 +1,34 @@
+package lexing
+
+type Token int
+
+const (
+	ILLEGAL Token = iota
+	EOF
+	WHITESPACE
+
+	LITERAL
+
+	ASTERISK
+	COMMA
+	EQUALS
+	PLACEHOLDER
+
+	SELECT
+	UPDATE
+	DELETE
+	FROM
+	WHERE
+	AND
+	OR
+	LIMIT
+	OFFSET
+	SET
+
+	INNER
+	LEFT
+	RIGHT
+	CROSS
+	JOIN
+	ON
+)
