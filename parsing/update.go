@@ -2,7 +2,6 @@ package parsing
 
 import (
 	"github.com/s2gatev/sqlmorph/ast"
-	"github.com/s2gatev/sqlmorph/lexing"
 )
 
 const UpdateWithoutTargetError = "UPDATE statement must be followed by a target class."
@@ -20,20 +19,20 @@ func (s *UpdateState) Name() string {
 func (s *UpdateState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, bool) {
 	target := ast.NewUpdate()
 
-	if token, _ := tokenizer.ReadToken(); token != lexing.UPDATE {
+	if token, _ := tokenizer.ReadToken(); token != UPDATE {
 		tokenizer.UnreadToken()
 		return result, false
 	}
 
 	table := &ast.Table{}
 
-	if token, tableName := tokenizer.ReadToken(); token == lexing.LITERAL {
+	if token, tableName := tokenizer.ReadToken(); token == LITERAL {
 		table.Name = tableName
 	} else {
 		wrongTokenPanic(UpdateWithoutTargetError, tableName)
 	}
 
-	if token, tableAlias := tokenizer.ReadToken(); token == lexing.LITERAL {
+	if token, tableAlias := tokenizer.ReadToken(); token == LITERAL {
 		table.Alias = tableAlias
 	} else {
 		tokenizer.UnreadToken()

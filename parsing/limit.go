@@ -2,7 +2,6 @@ package parsing
 
 import (
 	"github.com/s2gatev/sqlmorph/ast"
-	"github.com/s2gatev/sqlmorph/lexing"
 )
 
 const LimitWithoutNumberError = "LIMIT statement must be followed by a number."
@@ -20,12 +19,12 @@ func (s *LimitState) Name() string {
 func (s *LimitState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, bool) {
 	target := result.(ast.HasLimit)
 
-	if token, _ := tokenizer.ReadToken(); token != lexing.LIMIT {
+	if token, _ := tokenizer.ReadToken(); token != LIMIT {
 		tokenizer.UnreadToken()
 		return result, false
 	}
 
-	if token, limit := tokenizer.ReadToken(); token == lexing.LITERAL {
+	if token, limit := tokenizer.ReadToken(); token == LITERAL {
 		target.SetLimit(limit)
 	} else {
 		wrongTokenPanic(LimitWithoutNumberError, limit)

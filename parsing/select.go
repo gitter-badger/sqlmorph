@@ -2,7 +2,6 @@ package parsing
 
 import (
 	"github.com/s2gatev/sqlmorph/ast"
-	"github.com/s2gatev/sqlmorph/lexing"
 )
 
 const SelectWithoutFieldsError = "SELECT statement must be followed by field list."
@@ -18,7 +17,7 @@ func (s *SelectState) Name() string {
 }
 
 func (s *SelectState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, bool) {
-	if token, _ := tokenizer.ReadToken(); token != lexing.SELECT {
+	if token, _ := tokenizer.ReadToken(); token != SELECT {
 		tokenizer.UnreadToken()
 		return result, false
 	}
@@ -28,13 +27,13 @@ func (s *SelectState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, bo
 	// Parse fields.
 	for {
 		token, value := tokenizer.ReadToken()
-		if token == lexing.LITERAL || token == lexing.ASTERISK {
+		if token == LITERAL || token == ASTERISK {
 			target.AddField(parseField(value))
 		} else {
 			wrongTokenPanic(SelectWithoutFieldsError, value)
 		}
 
-		if token, _ := tokenizer.ReadToken(); token != lexing.COMMA {
+		if token, _ := tokenizer.ReadToken(); token != COMMA {
 			tokenizer.UnreadToken()
 			break
 		}

@@ -2,7 +2,6 @@ package parsing
 
 import (
 	"github.com/s2gatev/sqlmorph/ast"
-	"github.com/s2gatev/sqlmorph/lexing"
 )
 
 const SetWithoutFieldsError = "SET statement must be followed by field assignment list."
@@ -20,7 +19,7 @@ func (s *SetState) Name() string {
 func (s *SetState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, bool) {
 	target := result.(ast.HasFields)
 
-	if token, _ := tokenizer.ReadToken(); token != lexing.SET {
+	if token, _ := tokenizer.ReadToken(); token != SET {
 		tokenizer.UnreadToken()
 		return result, false
 	}
@@ -29,17 +28,17 @@ func (s *SetState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, bool)
 	for {
 		field := &ast.Field{}
 
-		if token, fieldName := tokenizer.ReadToken(); token == lexing.LITERAL {
+		if token, fieldName := tokenizer.ReadToken(); token == LITERAL {
 			field = parseField(fieldName)
 		} else {
 			wrongTokenPanic(SetWithoutFieldsError, fieldName)
 		}
 
-		if token, operator := tokenizer.ReadToken(); token != lexing.EQUALS {
+		if token, operator := tokenizer.ReadToken(); token != EQUALS {
 			wrongTokenPanic(SetWithoutFieldsError, operator)
 		}
 
-		if token, value := tokenizer.ReadToken(); token == lexing.LITERAL || token == lexing.PLACEHOLDER {
+		if token, value := tokenizer.ReadToken(); token == LITERAL || token == PLACEHOLDER {
 			field.Value = value
 		} else {
 			wrongTokenPanic(SetWithoutFieldsError, value)
@@ -47,7 +46,7 @@ func (s *SetState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, bool)
 
 		target.AddField(field)
 
-		if token, _ := tokenizer.ReadToken(); token != lexing.COMMA {
+		if token, _ := tokenizer.ReadToken(); token != COMMA {
 			tokenizer.UnreadToken()
 			break
 		}

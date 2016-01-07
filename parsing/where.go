@@ -2,7 +2,6 @@ package parsing
 
 import (
 	"github.com/s2gatev/sqlmorph/ast"
-	"github.com/s2gatev/sqlmorph/lexing"
 )
 
 const WhereWithoutConditionsError = "WHERE statement must be followed by condition list."
@@ -20,7 +19,7 @@ func (s *WhereState) Name() string {
 func (s *WhereState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, bool) {
 	target := result.(ast.HasConditions)
 
-	if token, _ := tokenizer.ReadToken(); token != lexing.WHERE {
+	if token, _ := tokenizer.ReadToken(); token != WHERE {
 		tokenizer.UnreadToken()
 		return result, false
 	}
@@ -29,17 +28,17 @@ func (s *WhereState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, boo
 	for {
 		condition := &ast.EqualsCondition{}
 
-		if token, field := tokenizer.ReadToken(); token == lexing.LITERAL {
+		if token, field := tokenizer.ReadToken(); token == LITERAL {
 			condition.Field = parseField(field)
 		} else {
 			wrongTokenPanic(WhereWithoutConditionsError, field)
 		}
 
-		if token, operator := tokenizer.ReadToken(); token != lexing.EQUALS {
+		if token, operator := tokenizer.ReadToken(); token != EQUALS {
 			wrongTokenPanic(WhereWithoutConditionsError, operator)
 		}
 
-		if token, value := tokenizer.ReadToken(); token == lexing.LITERAL || token == lexing.PLACEHOLDER {
+		if token, value := tokenizer.ReadToken(); token == LITERAL || token == PLACEHOLDER {
 			condition.Value = value
 		} else {
 			wrongTokenPanic(WhereWithoutConditionsError, value)
@@ -47,7 +46,7 @@ func (s *WhereState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, boo
 
 		target.AddCondition(condition)
 
-		if token, _ := tokenizer.ReadToken(); token != lexing.AND {
+		if token, _ := tokenizer.ReadToken(); token != AND {
 			tokenizer.UnreadToken()
 			break
 		}

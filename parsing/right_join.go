@@ -2,7 +2,6 @@ package parsing
 
 import (
 	"github.com/s2gatev/sqlmorph/ast"
-	"github.com/s2gatev/sqlmorph/lexing"
 )
 
 const (
@@ -23,25 +22,25 @@ func (s *RightJoinState) Name() string {
 func (s *RightJoinState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, bool) {
 	target := result.(ast.HasJoin)
 
-	if token, _ := tokenizer.ReadToken(); token != lexing.RIGHT {
+	if token, _ := tokenizer.ReadToken(); token != RIGHT {
 		tokenizer.UnreadToken()
 		return result, false
 	}
 
-	if token, value := tokenizer.ReadToken(); token != lexing.JOIN {
+	if token, value := tokenizer.ReadToken(); token != JOIN {
 		wrongTokenPanic(RightWithoutJoinError, value)
 	}
 
 	join := &ast.RightJoin{}
 	table := &ast.Table{}
 
-	if token, tableName := tokenizer.ReadToken(); token == lexing.LITERAL {
+	if token, tableName := tokenizer.ReadToken(); token == LITERAL {
 		table.Name = tableName
 	} else {
 		wrongTokenPanic(RightJoinWithoutTargetError, tableName)
 	}
 
-	if token, tableAlias := tokenizer.ReadToken(); token == lexing.LITERAL {
+	if token, tableAlias := tokenizer.ReadToken(); token == LITERAL {
 		table.Alias = tableAlias
 	} else {
 		tokenizer.UnreadToken()
@@ -49,21 +48,21 @@ func (s *RightJoinState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node,
 
 	join.Table = table
 
-	if token, value := tokenizer.ReadToken(); token != lexing.ON {
+	if token, value := tokenizer.ReadToken(); token != ON {
 		wrongTokenPanic(RightJoinWithoutOnError, value)
 	}
 
-	if token, leftField := tokenizer.ReadToken(); token == lexing.LITERAL {
+	if token, leftField := tokenizer.ReadToken(); token == LITERAL {
 		join.Left = parseField(leftField)
 	} else {
 		wrongTokenPanic(RightJoinWrongJoinFieldsError, leftField)
 	}
 
-	if token, operator := tokenizer.ReadToken(); token != lexing.EQUALS {
+	if token, operator := tokenizer.ReadToken(); token != EQUALS {
 		wrongTokenPanic(RightJoinWrongJoinFieldsError, operator)
 	}
 
-	if token, rightField := tokenizer.ReadToken(); token == lexing.LITERAL {
+	if token, rightField := tokenizer.ReadToken(); token == LITERAL {
 		join.Right = parseField(rightField)
 	} else {
 		wrongTokenPanic(RightJoinWrongJoinFieldsError, rightField)

@@ -1,4 +1,4 @@
-package lexing
+package parsing
 
 type Token int
 

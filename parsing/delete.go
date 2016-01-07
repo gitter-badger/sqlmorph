@@ -2,7 +2,6 @@ package parsing
 
 import (
 	"github.com/s2gatev/sqlmorph/ast"
-	"github.com/s2gatev/sqlmorph/lexing"
 )
 
 // DeleteState parses SELECT SQL clauses along with the desired fields.
@@ -16,7 +15,7 @@ func (s *DeleteState) Name() string {
 }
 
 func (s *DeleteState) Parse(result ast.Node, tokenizer *Tokenizer) (ast.Node, bool) {
-	if token, _ := tokenizer.ReadToken(); token != lexing.DELETE {
+	if token, _ := tokenizer.ReadToken(); token != DELETE {
 		tokenizer.UnreadToken()
 		return result, false
 	} else {
